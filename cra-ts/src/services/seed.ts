@@ -37,22 +37,22 @@ export const roomsSeed: IRoom[] = [
   {
     id: faker.datatype.uuid(),
     name: "general",
-    users: usersSeed,
+    users: usersSeed.map((user) => user.id),
   },
   {
     id: faker.datatype.uuid(),
     name: "random",
-    users: [user1, user2, user3],
+    users: [user1.id, user2.id, user3.id],
   },
   {
     id: faker.datatype.uuid(),
     name: "jokes",
-    users: [user3, user4, user5],
+    users: [user3.id, user4.id, user5.id],
   },
   {
     id: faker.datatype.uuid(),
     name: "memes",
-    users: [user1, user2, user5],
+    users: [user1.id, user2.id, user5.id],
   },
 ];
 
@@ -108,3 +108,8 @@ export const messagesSeed: IMessage[] = [
     roomId: memesRoom.id,
   },
 ];
+
+console.log("seeds::");
+console.log("usersSeed", usersSeed);
+console.log("roomsSeed", roomsSeed);
+console.log("messagesSeed", messagesSeed);
