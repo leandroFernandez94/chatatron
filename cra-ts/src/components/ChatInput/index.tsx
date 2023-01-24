@@ -29,6 +29,7 @@ export default function ChatInput({
           id={styles.chatInputTextarea}
           name="chat-textarea"
           value={value}
+          autoComplete="off"
           onChange={handleChangeValue}
         />
         <button type="submit" id={styles.chatInputButton}>
