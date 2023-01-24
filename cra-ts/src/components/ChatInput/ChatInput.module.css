@@ -1,0 +1,43 @@
+#chatInput {
+  height: 12vh;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+#chatInputForm {
+  padding: 1em;
+  height: 100%;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: stretch;
+}
+
+#chatInputTextarea {
+  flex-grow: 1;
+  border: 1px solid var(--purple);
+  border-top-left-radius: .5em;
+  border-bottom-left-radius: .5em;
+  border-right: none;
+  font-family: Arial;
+  padding: 1em;
+  resize: none;
+}
+
+#chatInputTextarea:focus {
+  outline: none;
+}
+
+#chatInputButton {
+  flex-shrink: 0;
+  border-left: none;
+  border: 1px solid var(--purple);
+  background-color: white;
+  color: var(--white);
+  border-top-right-radius: .5em;
+  border-bottom-right-radius: .5em;
+  padding-right: 2em;
+  padding-left: 2em;
+}
