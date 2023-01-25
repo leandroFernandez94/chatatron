@@ -1,12 +1,13 @@
 import IUser from "../types/IUser";
+import { sleep } from "../utils/sleep";
 import { usersSeed } from "./seed";
 
-export function login(email: string): Promise<IUser> {
-  return new Promise((resolve, reject) => {
-    const user = usersSeed.find((user) => user.email === email);
-    if (user) {
-      resolve(user);
-    }
-    reject(new Error("User not found"));
-  });
+export async function login(email: string): Promise<IUser> {
+  await sleep(1000);
+
+  const user = usersSeed.find((user) => user.email === email);
+  if (user) {
+    return user;
+  }
+  throw new Error("User not found");
 }

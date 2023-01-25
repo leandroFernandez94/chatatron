@@ -1,22 +1,41 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
 import StoreContext from "../contexts/StoreContext";
 import fetchRooms from "../services/fetchRooms";
 
 export default function SelectRoomScreen() {
-  const { activeUser, rooms, setRooms, setActiveRoom } =
+  const { rooms, setActiveRoom, activeUser, setRooms } =
     useContext(StoreContext);
+  const [isLoadingRooms, setIsLoadingRooms] = useState(false);
+  const [errorLoading, setErrorLoading] = useState<string | null>(null);
+  const history = useHistory();
+
+  async function loadRooms() {
+    try {
+      setIsLoadingRooms(true);
+      setErrorLoading(null);
+      const rooms = await fetchRooms(activeUser);
+      setRooms(rooms);
+    } catch (err) {
+      if (err instanceof Error) {
+        setErrorLoading(err.message);
+      } else {
+        setErrorLoading("Something went wrong X(");
+      }
+    } finally {
+      setIsLoadingRooms(false);
+    }
+  }
 
   useEffect(() => {
-    fetchRooms(activeUser).then((rooms) => {
-      setRooms(rooms);
-    });
+    loadRooms();
   }, []);
 
   function onSelectRoom(e: React.MouseEvent<HTMLButtonElement>) {
-    const roomName = e.currentTarget.name;
-    const room = rooms.find((room) => room.name === roomName);
-    if (room) {
-      setActiveRoom(room);
+    const roomId = e.currentTarget.name;
+    if (roomId) {
+      setActiveRoom(roomId);
+      history.push(`/room/${roomId}`);
     }
   }
 
@@ -25,11 +44,13 @@ export default function SelectRoomScreen() {
       <h1>Select Room:</h1>
       {rooms.map((room) => {
         return (
-          <button key={room.id} onClick={onSelectRoom} name={room.name}>
+          <button key={room.id} onClick={onSelectRoom} name={room.id}>
             {room.name}
           </button>
         );
       })}
+      {isLoadingRooms && <p>Loading...</p>}
+      {errorLoading && <p>{errorLoading}</p>}
     </div>
   );
 }

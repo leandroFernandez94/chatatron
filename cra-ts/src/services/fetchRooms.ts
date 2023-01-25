@@ -1,13 +1,13 @@
 import { IRoom } from "../types/IRoom";
 import IUser from "../types/IUser";
+import { sleep } from "../utils/sleep";
 import { roomsSeed } from "./seed";
 
-export default function fetchRooms(
+export default async function fetchRooms(
   activeUser?: IUser | null
 ): Promise<IRoom[]> {
-  if (!activeUser) return Promise.resolve(roomsSeed);
+  await sleep(1000);
+  if (!activeUser) return roomsSeed;
 
-  return Promise.resolve(
-    roomsSeed.filter((room) => room.users.includes(activeUser.id))
-  );
+  return roomsSeed.filter((room) => room.users.includes(activeUser.id));
 }

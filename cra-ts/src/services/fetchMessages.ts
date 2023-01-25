@@ -1,6 +1,8 @@
 import { IMessage } from "../types/IMessage";
+import { sleep } from "../utils/sleep";
 import { messagesSeed } from "./seed";
 
-export function fetchMessages(): Promise<IMessage[]> {
-  return Promise.resolve(messagesSeed);
+export async function fetchMessages(): Promise<IMessage[]> {
+  await sleep(1000);
+  return messagesSeed;
 }

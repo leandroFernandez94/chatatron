@@ -1,19 +1,29 @@
-import React, { useContext } from "react";
+import React from "react";
 import LoginScreen from "./screens/Login";
 import SelectRoomScreen from "./screens/SelectRoom";
 import ActiveRoom from "./screens/ActiveRoom";
-import StoreContext from "./contexts/StoreContext";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Redirect,
+} from "react-router-dom";
 
-export default function Router() {
-  const store = useContext(StoreContext);
-
-  if (!store.activeUser) {
-    return <LoginScreen />;
-  }
-
-  if (!store.activeRoom) {
-    return <SelectRoomScreen />;
-  }
-
-  return <ActiveRoom />;
+export default function AppRouter() {
+  return (
+    <Router>
+      <Switch>
+        <Route path="/login" component={LoginScreen} />
+        <Route path="/select-room">
+          <SelectRoomScreen />
+        </Route>
+        <Route path="/room/:roomId">
+          <ActiveRoom />
+        </Route>
+        <Route path="">
+          <Redirect to="/login" />
+        </Route>
+      </Switch>
+    </Router>
+  );
 }

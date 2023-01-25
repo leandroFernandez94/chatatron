@@ -23,6 +23,8 @@ export default function useStoreContextValue(): StoreContextType {
     return acc;
   }, {} as { [key: string]: IUser });
 
+  const inactiveRooms = rooms.filter((room) => room.id !== activeRoom?.id);
+
   function addMessage(message: string) {
     const newMessages = [
       ...messages,
@@ -37,6 +39,11 @@ export default function useStoreContextValue(): StoreContextType {
     setMessageInputValue("");
   }
 
+  function setActiveRoomId(roomId: string) {
+    const newActiveRoom = rooms.find((room) => room.id === roomId);
+    setActiveRoom(newActiveRoom!);
+  }
+
   return {
     // state
     messages,
@@ -49,13 +56,14 @@ export default function useStoreContextValue(): StoreContextType {
     // computed from state
     activeRoomMessages,
     usersMap,
+    inactiveRooms,
 
     // actions
     setUsers,
     setRooms,
     setMessages,
     setActiveUser,
-    setActiveRoom,
+    setActiveRoom: setActiveRoomId,
     addMessage,
     setMessageInputValue,
   };

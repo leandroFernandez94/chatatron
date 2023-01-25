@@ -111,5 +111,6 @@ export const messagesSeed: IMessage[] = [
 
 console.log("seeds::");
 console.log("usersSeed", usersSeed);
+console.log("user email::", usersSeed[0].email);
 console.log("roomsSeed", roomsSeed);
 console.log("messagesSeed", messagesSeed);
