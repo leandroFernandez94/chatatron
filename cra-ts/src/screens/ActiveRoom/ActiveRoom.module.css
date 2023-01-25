@@ -20,10 +20,50 @@
   padding: 1em;
 }
 
-#changeRoom {
+#roomMenu {
   width: 30vw;
-  padding-left: 1em;
+  max-width: 300px;
   border-left: 1px solid var(--purple);
-  background-color: var(--red);
   color: var(--purple);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+}
+
+#roomMenu .changeRoomContainer {
+  padding: 1em;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-grow: 1;
+}
+
+#roomMenu .changeRoomContainer button {
+  padding: 0.5em 1em;
+  width: 100%;
+  color: var(--purple);
+  background-color: white;
+  border: 1px solid var(--purple);
+}
+
+#roomMenu .changeRoomContainer button:not(:first-child) {
+  margin-top: 1em;
+}
+
+.logoutContainer {
+  width: 100%;
+  background-color: var(--purple);
+  text-align: center;
+}
+
+.logoutContainer button {
+  width: 100%;
+  padding: 1em 0;
+  font-size: 1.4em;
+  color: white;
+  background-color: var(--purple);
+  border: 1px solid white;
 }

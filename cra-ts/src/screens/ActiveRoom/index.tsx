@@ -65,38 +65,63 @@ export default function ActiveRoomScreen() {
     history.push(`/room/${roomId}`);
   }
 
+  function handleLogout(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    history.push("/");
+  }
+
   return (
     <main id={styles.chat}>
-      <section id={styles.activeRoom}>
-        <div id={styles.roomMessages}>
-          {activeRoomMessages.map((message, index) => {
-            return (
-              <Message
-                key={index}
-                text={message.text}
-                user={usersMap[message.userId]}
+      {
+        // if loadingData is true, show a loading message
+        loadingData && <p>Loading...</p>
+      }
+      {
+        // if errorLoading is not null, show the error message
+        errorLoading && <p>{errorLoading}</p>
+      }
+      {
+        // if loadingData is false and errorLoading is null, show the chat
+        !loadingData && !errorLoading && (
+          <>
+            <section id={styles.activeRoom}>
+              <div id={styles.roomMessages}>
+                {activeRoomMessages.map((message, index) => {
+                  return (
+                    <Message
+                      key={index}
+                      text={message.text}
+                      user={usersMap[message.userId]}
+                    />
+                  );
+                })}
+              </div>
+              <ChatInput
+                handleSendMessage={addMessage}
+                value={messageInputValue}
+                handleChangeValue={onChatInputChange}
               />
-            );
-          })}
-        </div>
-        <ChatInput
-          handleSendMessage={addMessage}
-          value={messageInputValue}
-          handleChangeValue={onChatInputChange}
-        />
-      </section>
-      <section id={styles.changeRoom}>
-        <h3>Pick another room:</h3>
-        <form onSubmit={handleChangeRoom}>
-          {inactiveRooms.map((room) => {
-            return (
-              <button key={room.id} name={room.id} type="submit">
-                {room.name}
-              </button>
-            );
-          })}
-        </form>
-      </section>
+            </section>
+            <section id={styles.roomMenu}>
+              <form onSubmit={handleLogout} className={styles.logoutContainer}>
+                <button type="submit">Logout ⬅️</button>
+              </form>
+              <div className={styles.changeRoomContainer}>
+                <h3>Pick another room:</h3>
+                <form onSubmit={handleChangeRoom}>
+                  {inactiveRooms.map((room) => {
+                    return (
+                      <button key={room.id} name={room.id} type="submit">
+                        {room.name}
+                      </button>
+                    );
+                  })}
+                </form>
+              </div>
+            </section>
+          </>
+        )
+      }
     </main>
   );
 }
