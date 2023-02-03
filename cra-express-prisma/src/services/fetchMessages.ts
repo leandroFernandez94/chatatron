@@ -1,8 +1,12 @@
-import { IMessage } from "../types/IMessage";
-import { sleep } from "../utils/sleep";
-import { messagesSeed } from "./seed";
+import { Message } from "@prisma/client";
+import request from "./request";
 
-export async function fetchMessages(): Promise<IMessage[]> {
-  await sleep(1000);
-  return messagesSeed;
+export async function fetchMessages(roomId: number): Promise<Message[]> {
+  try {
+    const messages: Message[] = await request(`/messages/${roomId}`);
+    return messages;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Failed to fetch messages");
+  }
 }

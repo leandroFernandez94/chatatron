@@ -1,29 +1,27 @@
+import { Message, Room, User } from "@prisma/client";
 import { createContext } from "react";
-import { IMessage } from "../types/IMessage";
-import { IRoom } from "../types/IRoom";
-import IUser from "../types/IUser";
 
 export interface StoreContextType {
   // state
-  users: IUser[];
-  rooms: IRoom[];
-  messages: IMessage[];
-  activeUser: IUser | null;
-  activeRoom: IRoom | null;
+  bootstrapped: boolean;
+  users: User[];
+  rooms: Room[];
+  activeUser: User | null;
+  activeRoom: Room | null;
   messageInputValue: string;
 
   // computed from state
-  activeRoomMessages: IMessage[];
-  usersMap: { [key: string]: IUser };
-  inactiveRooms: IRoom[];
+  inactiveRooms: Room[];
+  roomMessages: Map<number, Message[]>;
+  usersMap: Map<number, User>;
 
   // actions
-  setUsers: (users: IUser[]) => void;
-  setRooms: (rooms: IRoom[]) => void;
-  setMessages: (messages: IMessage[]) => void;
-  setActiveUser: (user: IUser) => void;
-  setActiveRoom: (roomId: string) => void;
-  addMessage: (message: string) => void;
+  bootstrap: () => void;
+  login: (email: string) => void;
+  logoutUser: () => void;
+  loadUserRooms: () => void;
+  setActiveRoomId: (roomId: number) => void;
+  sendMessage: (message: string) => void;
   setMessageInputValue: (value: string) => void;
 }
 

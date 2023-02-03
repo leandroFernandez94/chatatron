@@ -1,29 +1,37 @@
 import React from "react";
 import LoginScreen from "./screens/Login";
-import SelectRoomScreen from "./screens/SelectRoom";
-import ActiveRoom from "./screens/ActiveRoom";
+import RoomScreen from "./screens/Room";
 import {
   BrowserRouter as Router,
   Switch,
   Route,
   Redirect,
 } from "react-router-dom";
+import StoreContext from "./contexts/StoreContext";
+
+export enum routes {
+  login = "/login",
+  selectRoom = "/rooms",
+  room = "/rooms/:roomId",
+}
 
 export default function AppRouter() {
+  const context = React.useContext(StoreContext);
+
+  // dont route until we have bootstrapped the app context
+  if (!context.bootstrapped) return null;
+
   return (
     <Router>
       <Switch>
-        <Route path="/login">
+        <Route path={routes.login}>
           <LoginScreen />
         </Route>
-        <Route path="/select-room">
-          <SelectRoomScreen />
-        </Route>
-        <Route path="/room/:roomId">
-          <ActiveRoom />
+        <Route path={routes.selectRoom}>
+          <RoomScreen />
         </Route>
         <Route path="">
-          <Redirect to="/login" />
+          <Redirect to={routes.login} />
         </Route>
       </Switch>
     </Router>

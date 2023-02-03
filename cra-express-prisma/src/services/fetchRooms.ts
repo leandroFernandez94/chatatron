@@ -1,13 +1,9 @@
-import { IRoom } from "../types/IRoom";
-import IUser from "../types/IUser";
-import { sleep } from "../utils/sleep";
-import { roomsSeed } from "./seed";
+import { RoomWithUsersIds } from "../types/IRoom";
+import request from "./request";
 
-export default async function fetchRooms(
-  activeUser?: IUser | null
-): Promise<IRoom[]> {
-  await sleep(1000);
-  if (!activeUser) return roomsSeed;
-
-  return roomsSeed.filter((room) => room.users.includes(activeUser.id));
+export default async function fetchRoomsWithUsers(
+  userId: number
+): Promise<RoomWithUsersIds[]> {
+  const rooms: RoomWithUsersIds[] = await request(`/rooms/${userId}`);
+  return rooms;
 }

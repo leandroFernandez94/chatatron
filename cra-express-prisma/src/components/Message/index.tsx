@@ -1,10 +1,10 @@
+import { User } from "@prisma/client";
 import React from "react";
-import IUser from "../../types/IUser";
 import styles from "./Message.module.css";
 
 type MessageProps = {
   text: string;
-  user: IUser;
+  user: User;
 };
 
 export default function Message({ text, user }: MessageProps) {

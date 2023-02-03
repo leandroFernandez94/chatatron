@@ -1,7 +1,5 @@
-import IUser from "./IUser";
+import { Room } from "@prisma/client";
 
-export interface IRoom {
-  id: string;
-  name: string;
-  users: IUser["id"][];
-}
+export type RoomWithUsersIds = Room & {
+  userIds: number[];
+};
