@@ -68,6 +68,17 @@ function createUserSession(userId) {
         return session.token;
     });
 }
+app.post(`/sign-up`, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { name, email } = req.body;
+    const user = yield prisma.user.create({
+        data: {
+            name,
+            email,
+        },
+    });
+    const token = yield createUserSession(user.id);
+    res.cookie(sessionTokenId, token).send(user);
+}));
 app.post(`/login`, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email } = req.body;
     const user = yield getUserByEmail(email);
@@ -92,25 +103,37 @@ app.post(`/logout`, (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     res.json({ success: true });
 }));
 app.get("/rooms/:userId", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { userId } = req.params;
-    const rooms = yield prisma.room.findMany({
-        where: {
-            users: {
-                some: {
-                    userId: Number(userId),
+    try {
+        const { userId } = req.params;
+        console.log("userId::", userId);
+        const rooms = yield prisma.room.findMany({
+            where: {
+                users: {
+                    some: {
+                        userId: Number(userId),
+                    },
                 },
             },
-        },
-        include: {
-            users: true,
-        },
-    });
-    const roomsWithUserIds = rooms.map((room) => {
-        const { users } = room, roomWithoutUsers = __rest(room, ["users"]);
-        const userIds = users.map((user) => user.userId);
-        return Object.assign(Object.assign({}, roomWithoutUsers), { userIds });
-    });
-    res.json(roomsWithUserIds);
+            include: {
+                users: true,
+            },
+        });
+        console.log("rooms::", rooms);
+        const roomsWithUserIds = rooms.map((room) => {
+            const { users } = room, roomWithoutUsers = __rest(room, ["users"]);
+            const userIds = users.map((user) => user.userId);
+            return Object.assign(Object.assign({}, roomWithoutUsers), { userIds });
+        });
+        res.json(roomsWithUserIds);
+    }
+    catch (error) {
+        console.log(error);
+        res.json({ error: "Something went wrong" });
+    }
+}));
+app.get("/initial-rooms", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const rooms = yield prisma.room.findMany();
+    res.json(rooms);
 }));
 app.get("/users/:userId", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { userId } = req.params;
@@ -133,6 +156,46 @@ app.get("/messages/:roomId", (req, res) => __awaiter(void 0, void 0, void 0, fun
         },
     });
     res.json(messages);
+}));
+app.post(`/set-user-rooms/:userId`, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { userId } = req.params;
+    const { roomIds } = req.body;
+    yield prisma.$transaction((tx) => __awaiter(void 0, void 0, void 0, function* () {
+        const user = yield tx.user.findUnique({
+            where: {
+                id: Number(userId),
+            },
+        });
+        if (!user) {
+            res.json({ error: `No user found for id: ${userId}` });
+            return;
+        }
+        const rooms = yield tx.room.findMany({
+            where: {
+                id: {
+                    in: roomIds,
+                },
+            },
+        });
+        for (let i = 0; i < rooms.length; i++) {
+            const room = rooms[i];
+            yield tx.userOnRoom.create({
+                data: {
+                    user: {
+                        connect: {
+                            id: Number(userId),
+                        },
+                    },
+                    room: {
+                        connect: {
+                            id: room.id,
+                        },
+                    },
+                },
+            });
+        }
+    }));
+    res.json({ success: true });
 }));
 app.post(`/message`, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { authorId, roomId, content } = req.body;

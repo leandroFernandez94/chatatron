@@ -1,0 +1,30 @@
+.selectInitialRooms {
+  margin-left: 2rem;
+}
+
+.initialRoomsForm {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  height: 100%;
+
+}
+
+.roomCheckboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+}
+
+.initialRoomsSubmitButton {
+  all: unset;
+  width: auto;
+  padding: 1em;
+  margin-top: 2em;
+  border: 1px solid gray;
+  border-radius: 0.5rem;
+  background-color: cornflowerblue;
+  color: white;
+  cursor: pointer;
+}

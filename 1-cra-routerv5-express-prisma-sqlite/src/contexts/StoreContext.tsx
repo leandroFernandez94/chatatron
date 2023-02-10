@@ -5,6 +5,7 @@ export interface StoreContextType {
   // state
   bootstrapped: boolean;
   users: User[];
+  initialRooms: Room[];
   rooms: Room[];
   activeUser: User | null;
   activeRoom: Room | null;
@@ -18,8 +19,11 @@ export interface StoreContextType {
   // actions
   bootstrap: () => void;
   login: (email: string) => void;
+  signUp: (name: string, email: string) => void;
   logoutUser: () => void;
   loadUserRooms: () => void;
+  loadInitialRooms: () => void;
+  selectInitialRooms: (roomIds: number[]) => void;
   setActiveRoomId: (roomId: number) => void;
   sendMessage: (message: string) => void;
   setMessageInputValue: (value: string) => void;

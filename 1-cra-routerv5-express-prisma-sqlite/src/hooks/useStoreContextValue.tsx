@@ -2,6 +2,7 @@ import { Message, Room, User } from "@prisma/client";
 import { useMemo, useState } from "react";
 import { StoreContextType } from "../contexts/StoreContext";
 import { routes } from "../Router";
+import { fetchAllRooms } from "../services/fetchAllRooms";
 import { fetchMessages } from "../services/fetchMessages";
 import fetchRoomsWithUsers from "../services/fetchRooms";
 import { fetchUserById } from "../services/fetchUserById";
@@ -9,9 +10,12 @@ import { getMe } from "../services/getMe";
 import { logout } from "../services/logout";
 import { postLogin } from "../services/postLogin";
 import { postMessage } from "../services/postMessage";
+import { postSignUp } from "../services/postSignUp";
+import { setUserRooms } from "../services/setUserRooms";
 
 export default function useStoreContextValue(): StoreContextType {
   const [bootstrapped, setBootstrapped] = useState(false);
+  const [initialRooms, setInitialRooms] = useState<Room[]>([]);
   const [rooms, setRooms] = useState<Room[]>([]);
   const [roomMessages, setRoomMessages] = useState<Map<number, Message[]>>(
     new Map()
@@ -51,6 +55,12 @@ export default function useStoreContextValue(): StoreContextType {
 
   async function login(email: string) {
     const user = await postLogin(email);
+    console.log(user);
+    setActiveUser(user);
+  }
+
+  async function signUp(name: string, email: string) {
+    const user = await postSignUp(name, email);
     setActiveUser(user);
   }
 
@@ -63,10 +73,17 @@ export default function useStoreContextValue(): StoreContextType {
     setRoomMessages(new Map());
   }
 
+  async function loadInitialRooms() {
+    const rooms = await fetchAllRooms();
+    setInitialRooms(rooms);
+  }
+
   async function loadUserRooms() {
+    console.log("activeUser", activeUser);
     if (!activeUser) return;
 
     const rooms = await fetchRoomsWithUsers(activeUser.id);
+
     const uniqueUsers = Array.from(
       new Set(rooms.map((room) => room.userIds).flat())
     );
@@ -77,8 +94,16 @@ export default function useStoreContextValue(): StoreContextType {
       })
     );
 
+    console.log("rooms", rooms);
+    console.log("users", users);
+
     setUsers(users);
     setRooms(rooms);
+  }
+
+  async function selectInitialRooms(roomIds: number[]) {
+    if (!activeUser) throw new Error("No active user");
+    setUserRooms(activeUser.id, roomIds);
   }
 
   async function loadRoomMessages(roomId: number) {
@@ -108,6 +133,7 @@ export default function useStoreContextValue(): StoreContextType {
     // state
     bootstrapped,
     rooms,
+    initialRooms,
     users,
     activeUser,
     activeRoom,
@@ -121,7 +147,10 @@ export default function useStoreContextValue(): StoreContextType {
     // actions
     bootstrap,
     login,
+    signUp,
     logoutUser,
+    loadInitialRooms,
+    selectInitialRooms,
     loadUserRooms,
     setActiveRoomId,
     sendMessage,

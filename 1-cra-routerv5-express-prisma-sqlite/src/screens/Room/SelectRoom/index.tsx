@@ -1,5 +1,6 @@
 import { Room } from "@prisma/client";
 import { MouseEventHandler } from "react";
+import styles from "./SelectRoom.module.css";
 
 type Props = {
   rooms: Room[];
@@ -8,13 +9,20 @@ type Props = {
 
 export function SelectRoom({ rooms, onSelectRoom }: Props) {
   return (
-    <div>
+    <section className={styles.selectRoomSection}>
       <h1>Select Room:</h1>
-      {rooms.map((room) => (
-        <button key={room.id} onClick={onSelectRoom} name={String(room.id)}>
-          {room.name}
-        </button>
-      ))}
-    </div>
+      <div className={styles.roomsContainer}>
+        {rooms.map((room) => (
+          <button
+            key={room.id}
+            onClick={onSelectRoom}
+            name={String(room.id)}
+            className={styles.roomButton}
+          >
+            {room.name}
+          </button>
+        ))}
+      </div>
+    </section>
   );
 }

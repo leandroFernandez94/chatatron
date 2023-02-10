@@ -8,9 +8,12 @@ import {
   Redirect,
 } from "react-router-dom";
 import StoreContext from "./contexts/StoreContext";
+import { SelectInitialRooms } from "./screens/SelectInitialRooms";
 
 export enum routes {
   login = "/login",
+  signup = "/sign-up",
+  selectInitialRooms = "/select-initial-rooms",
   selectRoom = "/rooms",
   room = "/rooms/:roomId",
 }
@@ -26,6 +29,12 @@ export default function AppRouter() {
       <Switch>
         <Route path={routes.login}>
           <LoginScreen />
+        </Route>
+        <Route path={routes.signup}>
+          <LoginScreen isSignUp />
+        </Route>
+        <Route path={routes.selectInitialRooms}>
+          <SelectInitialRooms />
         </Route>
         <Route path={routes.selectRoom}>
           <RoomScreen />
