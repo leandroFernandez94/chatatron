@@ -103,7 +103,7 @@ export default function useStoreContextValue(): StoreContextType {
 
   async function selectInitialRooms(roomIds: number[]) {
     if (!activeUser) throw new Error("No active user");
-    setUserRooms(activeUser.id, roomIds);
+    return setUserRooms(activeUser.id, roomIds);
   }
 
   async function loadRoomMessages(roomId: number) {

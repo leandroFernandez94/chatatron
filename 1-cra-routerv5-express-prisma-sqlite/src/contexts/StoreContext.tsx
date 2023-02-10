@@ -23,7 +23,7 @@ export interface StoreContextType {
   logoutUser: () => void;
   loadUserRooms: () => void;
   loadInitialRooms: () => void;
-  selectInitialRooms: (roomIds: number[]) => void;
+  selectInitialRooms: (roomIds: number[]) => Promise<void>;
   setActiveRoomId: (roomId: number) => void;
   sendMessage: (message: string) => void;
   setMessageInputValue: (value: string) => void;

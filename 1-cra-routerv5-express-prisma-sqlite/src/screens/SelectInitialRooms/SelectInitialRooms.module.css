@@ -11,10 +11,32 @@
 
 }
 
+.roomsContainer {
+  display: flex;
+  justify-content: space-between;
+  gap: 1em;
+}
+
 .roomCheckboxLabel {
   display: flex;
   align-items: center;
   gap: 1em;
+  padding: .5em;
+  border-radius: .5em;
+  border: 1px solid gray;
+  cursor: pointer;
+}
+
+.checkboxInput {
+  visibility: hidden;
+  width: 0;
+  height: 0;
+  margin: 0;
+}
+
+.checkboxInput:checked+.roomCheckboxLabel {
+  background-color: cornflowerblue;
+  color: white;
 }
 
 .initialRoomsSubmitButton {

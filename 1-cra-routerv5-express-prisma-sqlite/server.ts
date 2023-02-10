@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 import { randomUUID } from "crypto";
 import cookieParser from "cookie-parser";
+import morgan from "morgan";
 
 const prisma = new PrismaClient();
 const app = express();
@@ -19,6 +20,8 @@ app.use(
 app.use(cookieParser());
 
 app.use(express.json());
+
+app.use(morgan("dev"));
 
 async function getUserByEmail(email: string): Promise<User | null> {
   return prisma.user.findUnique({
@@ -102,7 +105,7 @@ app.get("/rooms/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
 
-    console.log("userId::", userId);
+    await prisma.$connect();
 
     const rooms = await prisma.room.findMany({
       where: {
@@ -116,8 +119,6 @@ app.get("/rooms/:userId", async (req, res) => {
         users: true,
       },
     });
-
-    console.log("rooms::", rooms);
 
     const roomsWithUserIds = rooms.map((room) => {
       const { users, ...roomWithoutUsers } = room;

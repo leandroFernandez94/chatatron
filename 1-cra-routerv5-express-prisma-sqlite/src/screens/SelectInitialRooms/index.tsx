@@ -32,12 +32,25 @@ export function SelectInitialRooms() {
     <section className={styles.selectInitialRooms}>
       <h1>Select Initial Rooms</h1>
       <form onSubmit={handleSubmit} className={styles.initialRoomsForm}>
-        {initialRooms.map((room) => (
-          <label className={styles.roomCheckboxLabel}>
-            <input type="checkbox" name={room.id.toString()} />
-            {room.name}
-          </label>
-        ))}
+        <div className={styles.roomsContainer}>
+          {initialRooms.map((room) => (
+            <div className={styles.room}>
+              <input
+                type="checkbox"
+                name={room.id.toString()}
+                className={styles.checkboxInput}
+                key={room.id}
+                id={room.id.toString()}
+              />
+              <label
+                className={styles.roomCheckboxLabel}
+                htmlFor={room.id.toString()}
+              >
+                {room.name}
+              </label>
+            </div>
+          ))}
+        </div>
         <button type="submit" className={styles.initialRoomsSubmitButton}>
           Continue
         </button>
