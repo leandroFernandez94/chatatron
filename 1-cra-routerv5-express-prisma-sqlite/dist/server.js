@@ -70,6 +70,7 @@ function createUserSession(userId) {
         return session.token;
     });
 }
+//-------- session ------------
 app.post(`/sign-up`, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { name, email } = req.body;
     const user = yield prisma.user.create({
@@ -91,6 +92,7 @@ app.post(`/login`, (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     const token = yield createUserSession(user.id);
     res.cookie(sessionTokenId, token).send(user);
 }));
+//-------- user ------------
 app.get(`/me`, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const token = (req.cookies && req.cookies[sessionTokenId]) || "";
     const user = yield getUserBySessionToken(token);
@@ -104,6 +106,20 @@ app.post(`/logout`, (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     res.clearCookie(sessionTokenId);
     res.json({ success: true });
 }));
+app.get("/users/:userId", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { userId } = req.params;
+    const user = yield prisma.user.findUnique({
+        where: {
+            id: Number(userId),
+        },
+    });
+    if (!user) {
+        res.json({ error: `No user found for id: ${userId}` });
+        return;
+    }
+    res.json(user);
+}));
+// ------------------ Rooms ------------------
 app.get("/rooms/:userId", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { userId } = req.params;
@@ -135,28 +151,6 @@ app.get("/rooms/:userId", (req, res) => __awaiter(void 0, void 0, void 0, functi
 app.get("/initial-rooms", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const rooms = yield prisma.room.findMany();
     res.json(rooms);
-}));
-app.get("/users/:userId", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { userId } = req.params;
-    const user = yield prisma.user.findUnique({
-        where: {
-            id: Number(userId),
-        },
-    });
-    if (!user) {
-        res.json({ error: `No user found for id: ${userId}` });
-        return;
-    }
-    res.json(user);
-}));
-app.get("/messages/:roomId", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { roomId } = req.params;
-    const messages = yield prisma.message.findMany({
-        where: {
-            roomId: Number(roomId),
-        },
-    });
-    res.json(messages);
 }));
 app.post(`/set-user-rooms/:userId`, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { userId } = req.params;
@@ -198,6 +192,16 @@ app.post(`/set-user-rooms/:userId`, (req, res) => __awaiter(void 0, void 0, void
     }));
     res.json({ success: true });
 }));
+// ------------------ Messages ------------------
+app.get("/messages/:roomId", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { roomId } = req.params;
+    const messages = yield prisma.message.findMany({
+        where: {
+            roomId: Number(roomId),
+        },
+    });
+    res.json(messages);
+}));
 app.post(`/message`, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { authorId, roomId, content } = req.body;
     const message = yield prisma.message.create({
@@ -209,6 +213,7 @@ app.post(`/message`, (req, res) => __awaiter(void 0, void 0, void 0, function* (
     });
     res.json(message);
 }));
+// ------------------ server ------------------
 app.listen(4000, () => console.log(`
 🚀 Server ready at: http://localhost:4000`));
 //# sourceMappingURL=server.js.map
