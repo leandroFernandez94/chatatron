@@ -54,6 +54,8 @@ async function createUserSession(
   return session.token;
 }
 
+//-------- session ------------
+
 app.post(`/sign-up`, async (req, res) => {
   const { name, email } = req.body;
 
@@ -84,6 +86,8 @@ app.post(`/login`, async (req, res) => {
   res.cookie(sessionTokenId, token).send(user);
 });
 
+//-------- user ------------
+
 app.get(`/me`, async (req, res) => {
   const token = (req.cookies && req.cookies[sessionTokenId]) || "";
   const user = await getUserBySessionToken(token);
@@ -100,6 +104,24 @@ app.post(`/logout`, async (req, res) => {
   res.clearCookie(sessionTokenId);
   res.json({ success: true });
 });
+
+app.get("/users/:userId", async (req, res) => {
+  const { userId } = req.params;
+  const user = await prisma.user.findUnique({
+    where: {
+      id: Number(userId),
+    },
+  });
+
+  if (!user) {
+    res.json({ error: `No user found for id: ${userId}` });
+    return;
+  }
+
+  res.json(user);
+});
+
+// ------------------ Rooms ------------------
 
 app.get("/rooms/:userId", async (req, res) => {
   try {
@@ -137,33 +159,6 @@ app.get("/initial-rooms", async (req, res) => {
   const rooms = await prisma.room.findMany();
 
   res.json(rooms);
-});
-
-app.get("/users/:userId", async (req, res) => {
-  const { userId } = req.params;
-  const user = await prisma.user.findUnique({
-    where: {
-      id: Number(userId),
-    },
-  });
-
-  if (!user) {
-    res.json({ error: `No user found for id: ${userId}` });
-    return;
-  }
-
-  res.json(user);
-});
-
-app.get("/messages/:roomId", async (req, res) => {
-  const { roomId } = req.params;
-  const messages = await prisma.message.findMany({
-    where: {
-      roomId: Number(roomId),
-    },
-  });
-
-  res.json(messages);
 });
 
 app.post(`/set-user-rooms/:userId`, async (req, res) => {
@@ -211,6 +206,19 @@ app.post(`/set-user-rooms/:userId`, async (req, res) => {
   res.json({ success: true });
 });
 
+// ------------------ Messages ------------------
+
+app.get("/messages/:roomId", async (req, res) => {
+  const { roomId } = req.params;
+  const messages = await prisma.message.findMany({
+    where: {
+      roomId: Number(roomId),
+    },
+  });
+
+  res.json(messages);
+});
+
 app.post(`/message`, async (req, res) => {
   const { authorId, roomId, content } = req.body;
   const message = await prisma.message.create({
@@ -223,6 +231,8 @@ app.post(`/message`, async (req, res) => {
 
   res.json(message);
 });
+
+// ------------------ server ------------------
 
 app.listen(4000, () =>
   console.log(`
